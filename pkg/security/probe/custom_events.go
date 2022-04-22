@@ -1,5 +1,3 @@
-//go:generate go run github.com/mailru/easyjson/easyjson -gen_build_flags=-mod=mod -no_std_marshalers -build_tags linux $GOFILE
-
 // Unless explicitly stated otherwise all files in this repository are licensed
 // under the Apache License Version 2.0.
 // This product includes software developed at Datadog (https://www.datadoghq.com/).
@@ -18,7 +16,6 @@ import (
 	"github.com/DataDog/datadog-agent/pkg/security/secl/model"
 	"github.com/DataDog/datadog-agent/pkg/security/secl/rules"
 	"github.com/hashicorp/go-multierror"
-	"github.com/mailru/easyjson"
 )
 
 const (
@@ -45,10 +42,10 @@ func AllCustomRuleIDs() []string {
 	}
 }
 
-func newCustomEvent(eventType model.EventType, marshaler easyjson.Marshaler) *CustomEvent {
+func newCustomEvent(eventType model.EventType, data interface{}) *CustomEvent {
 	return &CustomEvent{
 		eventType: eventType,
-		marshaler: marshaler,
+		data:      data,
 	}
 }
 
@@ -56,7 +53,7 @@ func newCustomEvent(eventType model.EventType, marshaler easyjson.Marshaler) *Cu
 type CustomEvent struct {
 	eventType model.EventType
 	tags      []string
-	marshaler easyjson.Marshaler
+	data      interface{}
 }
 
 // Clone returns a copy of the current CustomEvent
@@ -64,7 +61,7 @@ func (ce *CustomEvent) Clone() CustomEvent {
 	return CustomEvent{
 		eventType: ce.eventType,
 		tags:      ce.tags,
-		marshaler: ce.marshaler,
+		data:      ce.data,
 	}
 }
 
@@ -85,7 +82,7 @@ func (ce *CustomEvent) GetEventType() model.EventType {
 
 // MarshalJSON is the JSON marshaller function of the custom event
 func (ce *CustomEvent) MarshalJSON() ([]byte, error) {
-	return easyjson.Marshal(ce.marshaler)
+	return json.Marshal(ce)
 }
 
 // String returns the string representation of a custom event
@@ -105,7 +102,6 @@ func newRule(ruleDef *rules.RuleDefinition) *rules.Rule {
 }
 
 // EventLostRead is the event used to report lost events detected from user space
-// easyjson:json
 type EventLostRead struct {
 	Timestamp time.Time `json:"date"`
 	Name      string    `json:"map"`
@@ -124,7 +120,6 @@ func NewEventLostReadEvent(mapName string, lost float64) (*rules.Rule, *CustomEv
 }
 
 // EventLostWrite is the event used to report lost events detected from kernel space
-// easyjson:json
 type EventLostWrite struct {
 	Timestamp time.Time         `json:"date"`
 	Name      string            `json:"map"`
@@ -143,7 +138,6 @@ func NewEventLostWriteEvent(mapName string, perEventPerCPU map[string]uint64) (*
 }
 
 // RuleIgnored defines a ignored
-// easyjson:json
 type RuleIgnored struct {
 	ID         string `json:"id"`
 	Version    string `json:"version,omitempty"`
@@ -186,7 +180,6 @@ func (r *PoliciesIgnored) UnmarshalJSON(data []byte) error {
 }
 
 // RuleLoaded defines a loaded rule
-// easyjson:json
 type RuleLoaded struct {
 	ID         string `json:"id"`
 	Version    string `json:"version,omitempty"`
@@ -194,7 +187,6 @@ type RuleLoaded struct {
 }
 
 // PolicyLoaded is used to report policy was loaded
-// easyjson:json
 type PolicyLoaded struct {
 	Version      string
 	RulesLoaded  []*RuleLoaded  `json:"rules_loaded"`
@@ -202,7 +194,6 @@ type PolicyLoaded struct {
 }
 
 // RulesetLoadedEvent is used to report that a new ruleset was loaded
-// easyjson:json
 type RulesetLoadedEvent struct {
 	Timestamp       time.Time        `json:"date"`
 	PoliciesLoaded  []*PolicyLoaded  `json:"policies"`
@@ -268,7 +259,6 @@ func NewRuleSetLoadedEvent(rs *rules.RuleSet, err *multierror.Error) (*rules.Rul
 }
 
 // NoisyProcessEvent is used to report that a noisy process was temporarily discarded
-// easyjson:json
 type NoisyProcessEvent struct {
 	Timestamp      time.Time     `json:"date"`
 	Count          uint64        `json:"pid_count"`
@@ -311,7 +301,6 @@ func resolutionErrorToEventType(err error) model.EventType {
 }
 
 // AbnormalPathEvent is used to report that a path resolution failed for a suspicious reason
-// easyjson:json
 type AbnormalPathEvent struct {
 	Timestamp           time.Time        `json:"date"`
 	Event               *EventSerializer `json:"triggering_event"`
