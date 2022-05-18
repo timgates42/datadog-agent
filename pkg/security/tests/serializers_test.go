@@ -12,6 +12,8 @@ import (
 	"syscall"
 	"testing"
 
+	"github.com/goccy/go-json"
+
 	sprobe "github.com/DataDog/datadog-agent/pkg/security/probe"
 	"github.com/DataDog/datadog-agent/pkg/security/secl/rules"
 	"github.com/stretchr/testify/assert"
@@ -52,7 +54,7 @@ func BenchmarkSerializers(b *testing.B) {
 	b.ResetTimer()
 
 	for i := 0; i < b.N; i++ {
-		_, err := workingEvent.MarshalJSON()
+		_, err := json.Marshal(workingEvent)
 		if err != nil {
 			b.Error(err)
 		}
