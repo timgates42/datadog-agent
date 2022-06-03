@@ -222,6 +222,33 @@ func TestEnrichInferredSpanWithSNSEvent(t *testing.T) {
 	assert.True(t, inferredSpan.IsAsync)
 }
 
+func TestEnrichInferredSpanWithDynamoDBEvent(t *testing.T) {
+	var dynamoRequest events.DynamoDBEvent
+	_ = json.Unmarshal(getEventFromFile("dynamodb.json"), &dynamoRequest)
+	inferredSpan := mockInferredSpan()
+	inferredSpan.EnrichInferredSpanWithDynamoDBEvent(dynamoRequest)
+
+	span := inferredSpan.Span
+
+	assert.Equal(t, uint64(7353030974370088224), span.TraceID)
+	assert.Equal(t, uint64(8048964810003407541), span.SpanID)
+	assert.Equal(t, time.Unix(1428537600, 0).UnixNano(), span.Start)
+	assert.Equal(t, "dynamodb", span.Service)
+	assert.Equal(t, "aws.dynamodb", span.Name)
+	assert.Equal(t, "ExampleTableWithStream", span.Resource)
+	assert.Equal(t, WEB, span.Type)
+	assert.Equal(t, "aws.dynamodb", span.Meta[OperationName])
+	assert.Equal(t, "ExampleTableWithStream", span.Meta[ResourceNames])
+	assert.Equal(t, "ExampleTableWithStream", span.Meta[TableName])
+	assert.Equal(t, "arn:aws:dynamodb:us-east-1:123456789012:table/ExampleTableWithStream/stream/2015-06-27T00:48:05.899", span.Meta[EventSourceARN])
+	assert.Equal(t, "c4ca4238a0b923820dcc509a6f75849b", span.Meta[EventID])
+	assert.Equal(t, "INSERT", span.Meta[EventName])
+	assert.Equal(t, "1.1", span.Meta[EventVersion])
+	assert.Equal(t, "NEW_AND_OLD_IMAGES", span.Meta[StreamViewType])
+	assert.Equal(t, "26", span.Meta[SizeBytes])
+	assert.True(t, inferredSpan.IsAsync)
+}
+
 func TestFormatISOStartTime(t *testing.T) {
 	isotime := "2022-01-31T14:13:41.637Z"
 	startTime := formatISOStartTime(isotime)

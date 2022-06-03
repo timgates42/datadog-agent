@@ -7,6 +7,7 @@ package inferredspan
 
 import (
 	"fmt"
+	"strconv"
 	"strings"
 	"time"
 
@@ -132,6 +133,34 @@ func (inferredSpan *InferredSpan) EnrichInferredSpanWithSNSEvent(eventPayload ev
 	//Subject not available in SNS => SQS scenario
 	if snsMessage.Subject != "" {
 		inferredSpan.Span.Meta[Subject] = snsMessage.Subject
+	}
+}
+
+// EnrichInferredSpanWithDynamoDBEvent uses the parsed event
+// payload to enrich the current inferred span. It applies a
+// specific set of data to the span expected from a DynamoDB event.
+func (inferredSpan *InferredSpan) EnrichInferredSpanWithDynamoDBEvent(eventPayload events.DynamoDBEvent) {
+	eventRecord := eventPayload.Records[0]
+	eventSourceArn := eventRecord.EventSourceArn
+	tableName := strings.Split(eventSourceArn, "/")[1]
+	eventMessage := eventRecord.Change
+
+	inferredSpan.IsAsync = true
+	inferredSpan.Span.Name = "aws.dynamodb"
+	inferredSpan.Span.Service = DYNAMODB
+	inferredSpan.Span.Start = eventMessage.ApproximateCreationDateTime.UnixNano()
+	inferredSpan.Span.Resource = tableName
+	inferredSpan.Span.Type = WEB
+	inferredSpan.Span.Meta = map[string]string{
+		OperationName:  "aws.dynamodb",
+		ResourceNames:  tableName,
+		TableName:      tableName,
+		EventSourceARN: eventSourceArn,
+		EventID:        eventRecord.EventID,
+		EventName:      eventRecord.EventName,
+		EventVersion:   eventRecord.EventVersion,
+		StreamViewType: eventRecord.Change.StreamViewType,
+		SizeBytes:      strconv.FormatInt(eventRecord.Change.SizeBytes, 10),
 	}
 }
 

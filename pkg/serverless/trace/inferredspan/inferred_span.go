@@ -119,6 +119,11 @@ func (inferredSpan *InferredSpan) DispatchInferredSpan(eventType trigger.AWSEven
 		if ok {
 			inferredSpan.EnrichInferredSpanWithSNSEvent(eventContext)
 		}
+	case trigger.DynamoDBStreamEvent:
+		eventContext, ok := eventPayload.(events.DynamoDBEvent)
+		if ok {
+			inferredSpan.EnrichInferredSpanWithDynamoDBEvent(eventContext)
+		}
 	}
 
 	return nil
