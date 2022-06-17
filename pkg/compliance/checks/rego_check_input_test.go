@@ -108,7 +108,7 @@ func TestRegoInputCheck(t *testing.T) {
 				},
 			},
 			processes: processes{
-				NewCSPMFakeProcess(42, "proc1", []string{"arg1", "--path=foo"}),
+				NewCheckedFakeProcess(42, "proc1", []string{"arg1", "--path=foo"}),
 			},
 			expectedInput: `
 				{
