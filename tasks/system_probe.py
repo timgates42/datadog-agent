@@ -710,7 +710,7 @@ def setup_clang(ctx, target):
     if platform.machine() != "amd64":
         arch = arch_mapping.get(platform.machine())
     else:
-        arch = arch_mapping.get(platform.machine())
+        arch = "amd64"
 
 
     clang_present = ctx.run(f"stat /opt/datadog-agent/embedded/bin/clang-{target}", warn=True)
@@ -731,6 +731,7 @@ def setup_clang(ctx, target):
     ctx.run(f"sudo ln -s /opt/datadog-agent/embedded/bin/clang-{target} /opt/datadog-agent/embedded/bin/clang-bpf")
     ctx.run("sudo rm /opt/datadog-agent/embedded/bin/llc-bpf", warn=True)
     ctx.run(f"sudo ln -s /opt/datadog-agent/embedded/bin/llc-{target} /opt/datadog-agent/embedded/bin/llc-bpf")
+
 
 def build_object_files(ctx, parallel_build, bpf_clang_version):
     """build_object_files builds only the eBPF object"""
