@@ -60,7 +60,7 @@ def build(
     nikos_embedded_path=None,
     bundle_ebpf=False,
     parallel_build=True,
-    bpf_clang_version="14.0.3",
+    bpf_clang_version=CLANG_VERSION,
 ):
     """
     Build the system_probe
@@ -129,6 +129,7 @@ def test(
     windows=is_windows,
     parallel_build=True,
     failfast=False,
+    bpf_clang_version=CLANG_VERSION,
 ):
     """
     Run tests on eBPF parts
@@ -148,7 +149,7 @@ def test(
         clang_tidy(ctx)
 
     if not skip_object_files and not windows:
-        build_object_files(ctx, parallel_build=parallel_build)
+        build_object_files(ctx, parallel_build=parallel_build, bpf_clang_version=bpf_clang_version)
 
     build_tags = [NPM_TAG]
     if not windows:
@@ -272,11 +273,11 @@ def kitchen_test(ctx, target=None, provider="virtualbox"):
 
 
 @task
-def nettop(ctx, incremental_build=False, go_mod="mod", parallel_build=True):
+def nettop(ctx, incremental_build=False, go_mod="mod", parallel_build=True, bpf_clang_version=CLANG_VERSION):
     """
     Build and run the `nettop` utility for testing
     """
-    build_object_files(ctx, parallel_build=parallel_build)
+    build_object_files(ctx, parallel_build=parallel_build, bpf_clang_version=bpf_clang_version)
 
     cmd = 'go build -mod={go_mod} {build_type} -tags {tags} -o {bin_path} {path}'
     bin_path = os.path.join(BIN_DIR, "nettop")
@@ -391,9 +392,9 @@ def run_tidy(ctx, files, build_flags, fix=False, fail_on_issue=False, checks=Non
 
 
 @task
-def object_files(ctx, parallel_build=True):
+def object_files(ctx, parallel_build=True, bpf_clang_version=CLANG_VERSION):
     """object_files builds the eBPF object files"""
-    build_object_files(ctx, parallel_build=parallel_build)
+    build_object_files(ctx, parallel_build=parallel_build, bpf_clang_version=bpf_clang_version)
 
 
 def get_ebpf_targets():
