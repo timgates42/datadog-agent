@@ -5,6 +5,7 @@ class CustomFormatter
 
   def initialize(output)
     @output = output
+    @release = `uname -r`.strip
   end
 
   # Remove "."'s from the test execution output
@@ -16,21 +17,22 @@ class CustomFormatter
   end
 
   def example_group_started(notification)
-    @output << "\nstarted #{notification.group.description}\n"
+    @output << "\n[#{@release}] started #{notification.group.description}\n"
   end
 
   def example_group_finished(notification)
-    @output << "finished #{notification.group.description}\n\n"
+    @output << "[#{@release}] finished #{notification.group.description}\n\n"
   end
 
   def dump_summary(notification)
-    @output << "Finished in #{RSpec::Core::Formatters::Helpers.format_duration(notification.duration)}.\n"
-    @output << "Platform: #{`uname -a`}\n\n"
+    @output << "[#{@release}] Finished in #{RSpec::Core::Formatters::Helpers.format_duration(notification.duration)}.\n"
+    @output << "[#{@release}] Platform: #{`uname -a`}\n\n"
   end
 
   def dump_failures(notification) # ExamplesNotification
     if notification.failed_examples.length > 0
-      @output << "\n#{RSpec::Core::Formatters::ConsoleCodes.wrap("FAILURES:", :failure)}\n\n"
+      failures = RSpec::Core::Formatters::ConsoleCodes.wrap("[#{@release}] FAILURES:", :failure)
+      @output << "\n#{failures}\n\n"
       @output << error_summary(notification)
     end
   end
