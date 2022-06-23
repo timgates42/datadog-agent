@@ -935,7 +935,7 @@ func (pan *ProcessActivityNode) snapshot(ad *ActivityDump) error {
 }
 
 func (pan *ProcessActivityNode) insertSnapshotedSocket(p *process.Process, ad *ActivityDump,
-	family uint16, ip net.IP, port uint16) {
+	family uint16, ip net.IP, port uint16, protocol uint8) {
 	evt := NewEvent(ad.adm.probe.resolvers, ad.adm.probe.scrubber, ad.adm.probe)
 	evt.Event.Type = uint32(model.BindEventType)
 
@@ -948,6 +948,7 @@ func (pan *ProcessActivityNode) insertSnapshotedSocket(p *process.Process, ad *A
 		evt.Bind.Addr.IPNet.Mask = net.CIDRMask(128, 128)
 	}
 	evt.Bind.Addr.Port = port
+	evt.Bind.Protocol = protocol
 
 	if pan.InsertBindEvent(&evt.Bind) {
 		// count this new entry
@@ -1018,28 +1019,28 @@ func (pan *ProcessActivityNode) snapshotBoundSockets(p *process.Process, ad *Act
 		for _, sock := range TCP {
 			if sock.Inode == s {
 				pan.insertSnapshotedSocket(p, ad, unix.AF_INET, sock.LocalAddr,
-					uint16(sock.LocalPort))
+					uint16(sock.LocalPort), unix.IPPROTO_TCP)
 				break
 			}
 		}
 		for _, sock := range UDP {
 			if sock.Inode == s {
 				pan.insertSnapshotedSocket(p, ad, unix.AF_INET, sock.LocalAddr,
-					uint16(sock.LocalPort))
+					uint16(sock.LocalPort), unix.IPPROTO_UDP)
 				break
 			}
 		}
 		for _, sock := range TCP6 {
 			if sock.Inode == s {
 				pan.insertSnapshotedSocket(p, ad, unix.AF_INET6, sock.LocalAddr,
-					uint16(sock.LocalPort))
+					uint16(sock.LocalPort), unix.IPPROTO_TCP)
 				break
 			}
 		}
 		for _, sock := range UDP6 {
 			if sock.Inode == s {
 				pan.insertSnapshotedSocket(p, ad, unix.AF_INET6, sock.LocalAddr,
-					uint16(sock.LocalPort))
+					uint16(sock.LocalPort), unix.IPPROTO_UDP)
 				break
 			}
 		}
@@ -1281,9 +1282,10 @@ type BindNode struct {
 
 // SocketNode is used to store a Socket node and associated events
 type SocketNode struct {
-	Family string   `msg:"family"`
-	Bind   BindNode `msg:"bind"`
-	id     string
+	Family   string   `msg:"family"`
+	Protocol string   `msg:"protocol"`
+	Bind     BindNode `msg:"bind"`
+	id       string
 }
 
 // NewSocketNode returns a new SocketNode instance
@@ -1291,7 +1293,8 @@ func NewSocketNode(event *model.BindEvent) *SocketNode {
 	// NB: Today we only add sockets via bind events. When this struct will contains other
 	//     events (basically connect, but maybe others?), bind should became optionnal.
 	return &SocketNode{
-		Family: model.AddressFamily(event.AddrFamily).String(),
+		Family:   model.AddressFamily(event.AddrFamily).String(),
+		Protocol: model.L4Protocol(event.Protocol).String(),
 		Bind: BindNode{
 			Port: event.Addr.Port,
 			IP:   event.Addr.IPNet.IP.String(),

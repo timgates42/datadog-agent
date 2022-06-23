@@ -2617,6 +2617,12 @@ func (z *SocketNode) DecodeMsg(dc *msgp.Reader) (err error) {
 				err = msgp.WrapError(err, "Family")
 				return
 			}
+		case "protocol":
+			z.Protocol, err = dc.ReadString()
+			if err != nil {
+				err = msgp.WrapError(err, "Protocol")
+				return
+			}
 		case "bind":
 			var zb0002 uint32
 			zb0002, err = dc.ReadMapHeader()
@@ -2665,15 +2671,25 @@ func (z *SocketNode) DecodeMsg(dc *msgp.Reader) (err error) {
 
 // EncodeMsg implements msgp.Encodable
 func (z *SocketNode) EncodeMsg(en *msgp.Writer) (err error) {
-	// map header, size 2
+	// map header, size 3
 	// write "family"
-	err = en.Append(0x82, 0xa6, 0x66, 0x61, 0x6d, 0x69, 0x6c, 0x79)
+	err = en.Append(0x83, 0xa6, 0x66, 0x61, 0x6d, 0x69, 0x6c, 0x79)
 	if err != nil {
 		return
 	}
 	err = en.WriteString(z.Family)
 	if err != nil {
 		err = msgp.WrapError(err, "Family")
+		return
+	}
+	// write "protocol"
+	err = en.Append(0xa8, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c)
+	if err != nil {
+		return
+	}
+	err = en.WriteString(z.Protocol)
+	if err != nil {
+		err = msgp.WrapError(err, "Protocol")
 		return
 	}
 	// write "bind"
@@ -2708,10 +2724,13 @@ func (z *SocketNode) EncodeMsg(en *msgp.Writer) (err error) {
 // MarshalMsg implements msgp.Marshaler
 func (z *SocketNode) MarshalMsg(b []byte) (o []byte, err error) {
 	o = msgp.Require(b, z.Msgsize())
-	// map header, size 2
+	// map header, size 3
 	// string "family"
-	o = append(o, 0x82, 0xa6, 0x66, 0x61, 0x6d, 0x69, 0x6c, 0x79)
+	o = append(o, 0x83, 0xa6, 0x66, 0x61, 0x6d, 0x69, 0x6c, 0x79)
 	o = msgp.AppendString(o, z.Family)
+	// string "protocol"
+	o = append(o, 0xa8, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x63, 0x6f, 0x6c)
+	o = msgp.AppendString(o, z.Protocol)
 	// string "bind"
 	o = append(o, 0xa4, 0x62, 0x69, 0x6e, 0x64)
 	// map header, size 2
@@ -2746,6 +2765,12 @@ func (z *SocketNode) UnmarshalMsg(bts []byte) (o []byte, err error) {
 			z.Family, bts, err = msgp.ReadStringBytes(bts)
 			if err != nil {
 				err = msgp.WrapError(err, "Family")
+				return
+			}
+		case "protocol":
+			z.Protocol, bts, err = msgp.ReadStringBytes(bts)
+			if err != nil {
+				err = msgp.WrapError(err, "Protocol")
 				return
 			}
 		case "bind":
@@ -2797,6 +2822,6 @@ func (z *SocketNode) UnmarshalMsg(bts []byte) (o []byte, err error) {
 
 // Msgsize returns an upper bound estimate of the number of bytes occupied by the serialized message
 func (z *SocketNode) Msgsize() (s int) {
-	s = 1 + 7 + msgp.StringPrefixSize + len(z.Family) + 5 + 1 + 5 + msgp.Uint16Size + 3 + msgp.StringPrefixSize + len(z.Bind.IP)
+	s = 1 + 7 + msgp.StringPrefixSize + len(z.Family) + 9 + msgp.StringPrefixSize + len(z.Protocol) + 5 + 1 + 5 + msgp.Uint16Size + 3 + msgp.StringPrefixSize + len(z.Bind.IP)
 	return
 }

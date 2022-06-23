@@ -198,7 +198,7 @@ func (ad *ActivityDump) prepareDNSNode(n *DNSNode, data *graph, processID string
 func (ad *ActivityDump) prepareSocketNode(n *SocketNode, data *graph, processID string) {
 	var name string
 	if n.Bind.IP != "<nil>" {
-		name = fmt.Sprintf("%s/%s/%d", n.Family, n.Bind.IP, n.Bind.Port)
+		name = fmt.Sprintf("%s/%s/%s/%d", n.Family, n.Protocol, n.Bind.IP, n.Bind.Port)
 	} else { // show other addr families, even if they are not parsed yet
 		name = fmt.Sprintf("%s", n.Family)
 	}
