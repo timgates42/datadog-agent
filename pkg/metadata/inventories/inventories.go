@@ -225,11 +225,12 @@ func createPayload(ctx context.Context, hostname string, ac AutoConfigInterface,
 	agentMetadataMutex.Unlock()
 
 	return &Payload{
-		Hostname:      hostname,
-		Timestamp:     timeNow().UnixNano(),
-		CheckMetadata: &payloadCheckMeta,
-		AgentMetadata: &payloadAgentMeta,
-		HostMetadata:  getHostMetadata(),
+		Hostname:          hostname,
+		Timestamp:         timeNow().UnixNano(),
+		CheckMetadata:     &payloadCheckMeta,
+		AgentMetadata:     &payloadAgentMeta,
+		HostMetadata:      getHostMetadata(),
+		AgentConfMetadata: getAgentConfiguration(),
 	}
 }
 

@@ -9,15 +9,26 @@ update every 5 minutes (see `inventories_min_interval`).
 
 # Content
 
-The package offers 3 methods to add data to the payload: `SetAgentMetadata`, `SetHostMetadata` and `SetCheckMetadata`.
+The current payload contains 4 sections `check_metadata`, `agent_metadata`, `agent_configuration` and `host_metadata`.
+Those are not guaranteed to be sent in one payload. If the final serialized payload is to big, each section is sent in a
+different payload with `hostname` and `timestamp` always present. This is why some field are duplicated between section,
+like `agent_version`.
+
+The package offers 3 methods to the agent codebase to add data to the payload: `SetAgentMetadata`, `SetHostMetadata` and
+`SetCheckMetadata`.
 As the name suggests, checks use `SetCheckMetadata` and each metadata is linked to a check ID. Everything agent-related
-uses `SetAgentMetadata` and for host metadata `SetHostMetadata` is used.
+uses `SetAgentMetadata` and for host metadata `SetHostMetadata` is used. Any part of the Agent can add metadata to the
+inventory payload.
 
-Any part of the agent can add metadata to the inventory payload.
+The `agent_configuration` section is directly pulled from the `config` package.
 
-The current payload contains 3 sections `check_metadata`, `agent_metadata` and `host_metadata`. Those are not guaranteed
-to be sent in one payload. For now they are but each will be sent in it's own payload at some point. The `hostname` and
-`timestamp` field will always be present. This is why some field are duplicated like `agent_version`.
+## Agent Configuration
+
+`agent_configuration` contains two parts which are scrubbed from any sensitive information (same logic than for the flare):
+- the current runtime configuration of the Agent.
+- the setting explitly set by the user or the agent itself (ie: the configuration without the defaults).
+
+Sending Agent configuration can be disabled using `inventories_configuration_enabled`.
 
 ## Check metadata
 
@@ -112,6 +123,11 @@ The payload is a JSON dict with the following fields
   - `mac_address` - **string**: the MAC address for the host.
   - `agent_version` - **string**: the version of the Agent that sent this payload.
   - `cloud_provider` - **string**: the name of the cloud provider detected by the Agent.
+- `agent_configuration` - **dict of string to string**
+  - `runtime` - **string**: the current Agent configuration scrubbed, including all the defaults.
+  - `provided` - **string**: the current configuration without the defaults. This includes the settings configured by the
+    user. throuh the configuration file and the environment, as well as any settings explicitly set by the agent (for
+    example the number of workers is dynamically set by the agent itself based on the load).
 
 ("scrubbed" indicates that secrets are removed from the field value just as they are in logs)
 
@@ -237,6 +253,10 @@ Here an example of an inventory payload:
         "mac_address": "01:23:45:67:89:AB",
         "agent_version": "7.37.0-devel+git.198.68a5b69",
         "cloud_provider": "AWS"
+    },
+    "agent_configuration": {
+        "runtime": "<entire yaml configuration for the agent>",
+        "provided": "api_key: \"***************************aaaaa\"\ncheck_runners: 4\ncmd.check.fullsketches: false\ncontainerd_namespace: []\ncontainerd_namespaces: []\npython_version: \"3\"\ntracemalloc_debug: false"
     },
     "hostname": "my-host",
     "timestamp": 1631281754507358895

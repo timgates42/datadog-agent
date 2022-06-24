@@ -25,11 +25,12 @@ type CheckInstanceMetadata map[string]interface{}
 
 // Payload handles the JSON unmarshalling of the metadata payload
 type Payload struct {
-	Hostname      string         `json:"hostname"`
-	Timestamp     int64          `json:"timestamp"`
-	CheckMetadata *CheckMetadata `json:"check_metadata"`
-	AgentMetadata *AgentMetadata `json:"agent_metadata"`
-	HostMetadata  *HostMetadata  `json:"host_metadata"`
+	Hostname          string              `json:"hostname"`
+	Timestamp         int64               `json:"timestamp"`
+	CheckMetadata     *CheckMetadata      `json:"check_metadata"`
+	AgentMetadata     *AgentMetadata      `json:"agent_metadata"`
+	HostMetadata      *HostMetadata       `json:"host_metadata"`
+	AgentConfMetadata *AgentConfiguration `json:"agent_configuration"`
 }
 
 // MarshalJSON serialization a Payload to JSON
@@ -40,5 +41,53 @@ func (p *Payload) MarshalJSON() ([]byte, error) {
 
 // SplitPayload breaks the payload into times number of pieces
 func (p *Payload) SplitPayload(times int) ([]marshaler.AbstractMarshaler, error) {
-	return nil, fmt.Errorf("Inventories Payload splitting is not implemented")
+	newPayloads := []marshaler.AbstractMarshaler{}
+	fieldName := ""
+
+	// Each field can be sent individually but we can't split any more than this as the backend expects each payload
+	// to be received complete.
+
+	if p.CheckMetadata != nil {
+		fieldName = "check_metadata"
+		newPayloads = append(newPayloads,
+			&Payload{
+				Hostname:      p.Hostname,
+				Timestamp:     p.Timestamp,
+				CheckMetadata: p.CheckMetadata,
+			})
+	}
+	if p.AgentMetadata != nil {
+		fieldName = "agent_metadata"
+		newPayloads = append(newPayloads,
+			&Payload{
+				Hostname:      p.Hostname,
+				Timestamp:     p.Timestamp,
+				AgentMetadata: p.AgentMetadata,
+			})
+	}
+	if p.HostMetadata != nil {
+		fieldName = "host_metadata"
+		newPayloads = append(newPayloads,
+			&Payload{
+				Hostname:     p.Hostname,
+				Timestamp:    p.Timestamp,
+				HostMetadata: p.HostMetadata,
+			})
+	}
+	if p.AgentConfMetadata != nil {
+		fieldName = "configuration_metadata"
+		newPayloads = append(newPayloads,
+			&Payload{
+				Hostname:          p.Hostname,
+				Timestamp:         p.Timestamp,
+				AgentConfMetadata: p.AgentConfMetadata,
+			})
+	}
+
+	// if only one field is set we can't split any more
+	if len(newPayloads) <= 1 {
+		return nil, fmt.Errorf("could not split inventories payload any more, %s metadata is too big for intake", fieldName)
+	}
+
+	return newPayloads, nil
 }
