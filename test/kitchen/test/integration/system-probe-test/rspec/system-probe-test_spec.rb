@@ -8,7 +8,7 @@ def check_output(output, wait_thr)
   test_failures = []
 
   output.each_line do |line|
-    puts KernelOut.format(line)
+    puts KernelOut.format(line.strip)
     test_failures << KernelOut.format(line.strip) if line =~ GOLANG_TEST_FAILURE
   end
 
