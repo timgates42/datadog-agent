@@ -27,7 +27,7 @@ remote_directory testdir do
   end
 end
 
-remote_file ::File.join(testdir, 'color_idx') do
+file ::File.join(testdir, 'color_idx') do
   content node[:color_idx].to_s
   mode 644
 end
