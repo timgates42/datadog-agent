@@ -151,6 +151,7 @@ func chunkProcessEvents(events []*payload.ProcessEvent, size int) [][]*payload.P
 	return chunks
 }
 
+// fmtProcessEvents formats process lifecyle events to be sent in an agent payload
 func fmtProcessEvents(events []*model.ProcessEvent) []*payload.ProcessEvent {
 	payloadEvents := make([]*payload.ProcessEvent, 0, len(events))
 
@@ -158,6 +159,7 @@ func fmtProcessEvents(events []*model.ProcessEvent) []*payload.ProcessEvent {
 		pE := &payload.ProcessEvent{
 			CollectionTime: e.CollectionTime.UnixNano(),
 			Pid:            e.Pid,
+			ContainerId:    e.ContainerID,
 			Command: &payload.Command{
 				Exe:  e.Exe,
 				Args: e.Cmdline,

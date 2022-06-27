@@ -32,13 +32,6 @@ type eventTestData struct {
 	payloadEvent *payload.ProcessEvent
 }
 
-func parseRFC3339Time(t *testing.T, s string) time.Time {
-	t.Helper()
-	parsed, err := time.Parse(time.RFC3339Nano, s)
-	require.NoError(t, err)
-	return parsed
-}
-
 func mockedData(t *testing.T) []*eventTestData {
 	t.Helper()
 	return []*eventTestData{
@@ -52,7 +45,8 @@ func mockedData(t *testing.T) []*eventTestData {
 							PIDContext: secmodel.PIDContext{
 								Pid: 42,
 							},
-							PPid: 1,
+							ContainerID: "0123456789abcdef",
+							PPid:        1,
 							Credentials: secmodel.Credentials{
 								UID:   100,
 								GID:   100,
@@ -79,6 +73,7 @@ func mockedData(t *testing.T) []*eventTestData {
 				Type:           payload.ProcEventType_exec,
 				CollectionTime: parseRFC3339Time(t, "2022-06-12T12:00:10Z").UnixNano(),
 				Pid:            42,
+				ContainerId:    "0123456789abcdef",
 				Command: &payload.Command{
 					Exe:  "/usr/bin/curl",
 					Args: []string{"curl", "localhost:6062/debug/vars"},
@@ -107,7 +102,8 @@ func mockedData(t *testing.T) []*eventTestData {
 							PIDContext: secmodel.PIDContext{
 								Pid: 42,
 							},
-							PPid: 1,
+							ContainerID: "0123456789abcdef",
+							PPid:        1,
 							Credentials: secmodel.Credentials{
 								UID:   100,
 								GID:   100,
@@ -134,6 +130,7 @@ func mockedData(t *testing.T) []*eventTestData {
 				Type:           payload.ProcEventType_exit,
 				CollectionTime: parseRFC3339Time(t, "2022-06-12T12:00:20Z").UnixNano(),
 				Pid:            42,
+				ContainerId:    "0123456789abcdef",
 				Command: &payload.Command{
 					Exe:  "/usr/bin/curl",
 					Args: []string{"curl", "localhost:6062/debug/vars"},
