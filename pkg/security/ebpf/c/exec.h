@@ -2,6 +2,7 @@
 #define _EXEC_H_
 
 #include <linux/tty.h>
+#include <linux/binfmts.h>
 
 #include "filters.h"
 #include "syscalls.h"
@@ -245,6 +246,142 @@ SYSCALL_KPROBE3(execve, const char *, filename, const char **, argv, const char 
 
 SYSCALL_KPROBE4(execveat, int, fd, const char *, filename, const char **, argv, const char **, env) {
     return trace__sys_execveat(ctx, argv, env);
+}
+
+#ifndef DEBUG
+#define DEBUG 1
+#endif
+
+SEC("kprobe/finalize_exec")
+int kprobe_finalize_exec(struct pt_regs *ctx) {
+    long ret;
+
+    // void *bprm = (void *)PT_REGS_PARM1(ctx);
+    struct linux_binprm *bprm = (struct linux_binprm *)PT_REGS_PARM1(ctx);
+#ifdef DEBUG
+    if (bprm) {
+        bpf_printk("got linux_binprm addr\n");
+    } else {
+        bpf_printk("failed to get linux_binprm addr\n");
+        return 0;
+    }
+#endif
+
+    int argc;
+    // u64 argc_offset = 72;
+    // ret = bpf_probe_read(&argc, sizeof(argc), (char *)bprm + argc_offset);
+    ret = bpf_probe_read(&argc, sizeof(argc), &bprm->argc);
+#ifdef DEBUG
+    if (ret) {
+        bpf_printk("failed to read argc from linux_binprm\n");
+        return 0;
+    } else {
+        bpf_printk("got argc, value: %d\n", argc);
+    }
+#endif
+
+    int envc;
+    // u64 envc_offset = 76;
+    // ret = bpf_probe_read(&envc, sizeof(envc), (char *)bprm + envc_offset);
+    ret = bpf_probe_read(&envc, sizeof(envc), &bprm->envc);
+#ifdef DEBUG
+    if (ret) {
+        bpf_printk("failed to read envc from linux_binprm\n");
+        return 0;
+    } else {
+        bpf_printk("got envc, value: %d\n", envc);
+    }
+#endif
+
+    // void *ts = (void *)bpf_get_current_task();
+    struct task_struct *ts = (struct task_struct *) bpf_get_current_task();
+#ifdef DEBUG
+    if (ts) {
+        bpf_printk("got task_struct addr\n");
+    } else {
+        bpf_printk("failed to get task_struct addr\n");
+        return 0;
+    }
+#endif
+
+    // u64 mm_offset = 2064;
+    // void *mm_struct;
+    // ret = bpf_probe_read(&mm_struct, sizeof(mm_struct), (char *)ts + mm_offset);
+    struct mm_struct *mm_struct;
+    ret = bpf_probe_read(&mm_struct, sizeof(mm_struct), &ts->mm);
+#ifdef DEBUG
+    if (ret) {
+        bpf_printk("failed to read mm from linux_binprm\n");
+        return 0;
+    } else if (mm_struct == 0) {
+        bpf_printk("mm is zero\n");
+        return 0;
+    } else {
+        bpf_printk("got mm ptr\n");
+    }
+#endif
+
+    unsigned long arg_start, arg_end;
+    // u64 arg_start_offset = 312;
+    // u64 arg_end_offset = 320;
+    // ret = bpf_probe_read(&arg_start, sizeof(arg_start), (char *)mm_struct + arg_start_offset);
+    ret = bpf_probe_read(&arg_start, sizeof(arg_start), &mm_struct->arg_start);
+#ifdef DEBUG
+    if (ret) {
+        bpf_printk("failed to read arg_start from mm_struct\n");
+        return 0;
+    } else {
+        bpf_printk("got arg_start: %p\n", arg_start);
+    }
+#endif
+    // ret = bpf_probe_read(&arg_end, sizeof(arg_end), (char *)mm_struct + arg_end_offset);
+    ret = bpf_probe_read(&arg_end, sizeof(arg_end), &mm_struct->arg_end);
+#ifdef DEBUG
+    if (ret) {
+        bpf_printk("failed to read arg_end from mm_struct\n");
+        return 0;
+    } else {
+        bpf_printk("got arg_end: %p\n", arg_end);
+    }
+#endif
+
+    unsigned long env_start, env_end;
+    // u64 env_start_offset = 328;
+    // u64 env_end_offset = 336;
+    // ret = bpf_probe_read(&env_start, sizeof(env_start), (char *)mm_struct + env_start_offset);
+    ret = bpf_probe_read(&env_start, sizeof(env_start), &mm_struct->env_start);
+#ifdef DEBUG
+    if (ret) {
+        bpf_printk("failed to read env_start from mm_struct\n");
+        return 0;
+    } else {
+        bpf_printk("got env_start: %p\n", env_start);
+    }
+#endif
+    // ret = bpf_probe_read(&env_end, sizeof(env_end), (char *)mm_struct + env_end_offset);
+    ret = bpf_probe_read(&env_end, sizeof(env_end), &mm_struct->env_end);
+#ifdef DEBUG
+    if (ret) {
+        bpf_printk("failed to read env_end from mm_struct\n");
+        return 0;
+    } else {
+        bpf_printk("got env_end: %p\n", env_end);
+    }
+#endif
+
+    char arg_first[64] = {0};
+    ret = bpf_probe_read(&arg_first, sizeof(arg_first), (char *)arg_start);
+#ifdef DEBUG
+    if (ret) {
+        bpf_printk("failed to read arg_first\n");
+        return 0;
+    } else {
+        arg_first[64-1] = '\0';
+        bpf_printk("got arg_first: %s\n", arg_first);
+    }
+#endif
+
+    return 0;
 }
 
 int __attribute__((always_inline)) handle_exec_event(struct pt_regs *ctx, struct syscall_cache_t *syscall, struct file *file, struct path *path, struct inode *inode) {

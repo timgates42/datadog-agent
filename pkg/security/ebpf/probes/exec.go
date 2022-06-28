@@ -138,6 +138,13 @@ var execProbes = []*manager.Probe{
 			EBPFFuncName: "kprobe_switch_task_namespaces",
 		},
 	},
+	{
+		ProbeIdentificationPair: manager.ProbeIdentificationPair{
+			UID:          SecurityAgentUID,
+			EBPFSection:  "kprobe/finalize_exec",
+			EBPFFuncName: "kprobe_finalize_exec",
+		},
+	},
 }
 
 func getExecProbes() []*manager.Probe {
