@@ -51,7 +51,7 @@ require (
 	github.com/DataDog/datadog-operator v0.7.1-0.20220602134901-4f6af09bf54f
 	github.com/DataDog/ebpf-manager v0.0.0-20220406140358-68e6b7f54dde
 	github.com/DataDog/gohai v0.0.0-20220607152458-544032c46ded
-	github.com/DataDog/gopsutil v1.1.1-0.20220628122007-4a04e0832499
+	github.com/DataDog/gopsutil v1.1.1-0.20220628131456-9ef6a0c4dc9f
 	github.com/DataDog/nikos v1.7.6
 	github.com/DataDog/sketches-go v1.4.1
 	github.com/DataDog/viper v1.9.0

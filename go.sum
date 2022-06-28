@@ -150,12 +150,8 @@ github.com/DataDog/gohai v0.0.0-20220607152458-544032c46ded h1:n6a9LvGX2CkDiecmd
 github.com/DataDog/gohai v0.0.0-20220607152458-544032c46ded/go.mod h1:rwUdBVqBxO9kAvJxe9OGM/gmbvkU8vr4Zo8Jy/0FOhI=
 github.com/DataDog/gopsutil v0.0.0-20200624212600-1b53412ef321/go.mod h1:tGQp6XG4XpOyy67WG/YWXVxzOY6LejK35e8KcQhtRIQ=
 github.com/DataDog/gopsutil v0.0.0-20211112180027-9aa392ae181a/go.mod h1:glkxNt/qRu9lnpmUEQwOIAXW+COWDTBOTEAHqbgBPts=
-github.com/DataDog/gopsutil v0.0.0-20220308095538-d086941833e3 h1:TzjzV4FcSe81oI4372DijvtStUuAS5m0uts6cbvueGU=
-github.com/DataDog/gopsutil v0.0.0-20220308095538-d086941833e3/go.mod h1:glkxNt/qRu9lnpmUEQwOIAXW+COWDTBOTEAHqbgBPts=
-github.com/DataDog/gopsutil v0.0.0-20220622142557-7137be29eca3 h1:DLhXArZ9rUOhdB+9qf955sv9EUv3z6zEHXIhi8wmFhs=
-github.com/DataDog/gopsutil v0.0.0-20220622142557-7137be29eca3/go.mod h1:glkxNt/qRu9lnpmUEQwOIAXW+COWDTBOTEAHqbgBPts=
-github.com/DataDog/gopsutil v1.1.1-0.20220628122007-4a04e0832499 h1:3JdvcrqqHicnbMwJrsZ2/GqcH9cwsWZQe9B88DP1iUo=
-github.com/DataDog/gopsutil v1.1.1-0.20220628122007-4a04e0832499/go.mod h1:glkxNt/qRu9lnpmUEQwOIAXW+COWDTBOTEAHqbgBPts=
+github.com/DataDog/gopsutil v1.1.1-0.20220628131456-9ef6a0c4dc9f h1:+KW0ObXQYrpKpym35DR71aeGDJnArR2mINL3PIyiQEg=
+github.com/DataDog/gopsutil v1.1.1-0.20220628131456-9ef6a0c4dc9f/go.mod h1:glkxNt/qRu9lnpmUEQwOIAXW+COWDTBOTEAHqbgBPts=
 github.com/DataDog/gostackparse v0.5.0 h1:jb72P6GFHPHz2W0onsN51cS3FkaMDcjb0QzgxxA4gDk=
 github.com/DataDog/gostackparse v0.5.0/go.mod h1:lTfqcJKqS9KnXQGnyQMCugq3u1FP6UZMfWR0aitKFMM=
 github.com/DataDog/mmh3 v0.0.0-20210722141835-012dc69a9e49 h1:EbzDX8HPk5uE2FsJYxD74QmMw0/3CqSKhEr6teh0ncQ=
