@@ -346,10 +346,12 @@ core,github.com/emicklei/go-restful-swagger12,MIT,Copyright (c) 2017 Ernest Mick
 core,github.com/emicklei/go-restful/log,MIT,"Copyright (c) 2012,2013 Ernest Micklei"
 core,github.com/evanphx/json-patch,BSD-3-Clause,"Copyright (c) 2014, Evan Phoenix"
 core,github.com/fatih/color,MIT,Copyright (c) 2013 Fatih Arslan
+core,github.com/fatih/semgroup,BSD-3-Clause,"Copyright (c) 2022, Fatih Arslan"
 core,github.com/felixge/httpsnoop,MIT,Copyright (c) 2016 Felix Geisendörfer (felix@debuggable.com)
 core,github.com/freddierice/go-losetup,MIT,Copyright (c) 2017 Freddie Rice
 core,github.com/fsnotify/fsnotify,BSD-3-Clause,Copyright (c) 2012 The Go Authors. All rights reserved. | Copyright (c) 2012-2019 fsnotify Authors. All rights reserved.
 core,github.com/ghodss/yaml,MIT,Copyright (c) 2012 The Go Authors. All rights reserved | Copyright (c) 2014 Sam Ghods
+core,github.com/gitleaks/go-gitdiff/gitdiff,MIT,Copyright (c) 2019 Billy Keyes
 core,github.com/go-ini/ini,Apache-2.0,Copyright 2014 Unknwon
 core,github.com/go-kit/log,MIT,Copyright (c) 2021 Go kit
 core,github.com/go-kit/log/level,MIT,Copyright (c) 2021 Go kit
@@ -638,6 +640,7 @@ core,github.com/openshift/api/quota/v1,Apache-2.0,"Copyright 2020 Red Hat, Inc."
 core,github.com/patrickmn/go-cache,MIT,Alex Edwards <ajmedwards@gmail.com> | Copyright (c) 2012-2017 Patrick Mylund Nielsen and the go-cache contributors | Dustin Sallings <dustin@spy.net> | Jason Mooberry <jasonmoo@me.com> | Sergey Shepelev <temotor@gmail.com>
 core,github.com/pborman/uuid,BSD-3-Clause,"Copyright (c) 2009,2014 Google Inc. All rights reserved | Paul Borman <borman@google.com>"
 core,github.com/pelletier/go-toml,MIT,"Copyright (c) 2013 - 2021 Thomas Pelletier, Eric Anderton"
+core,github.com/petar-dambovaliev/aho-corasick,MIT,Copyright (c) 2021 Petar Dambovaliev
 core,github.com/philhofer/fwd,MIT,"Copyright (c) 2014-2015, Philip Hofer"
 core,github.com/pierrec/lz4/v4,BSD-3-Clause,"Copyright (c) 2015, Pierre Curto"
 core,github.com/pierrec/lz4/v4/internal/lz4block,BSD-3-Clause,"Copyright (c) 2015, Pierre Curto"
@@ -671,6 +674,10 @@ core,github.com/rivo/uniseg,MIT,Copyright (c) 2019 Oliver Kuederle
 core,github.com/robfig/cron,MIT,Copyright (C) 2012 Rob Figueiredo
 core,github.com/robfig/cron/v3,MIT,Copyright (C) 2012 Rob Figueiredo
 core,github.com/rs/cors,MIT,Copyright (c) 2014 Olivier Poitrey <rs@dailymotion.com>
+core,github.com/rs/zerolog,MIT,Copyright (c) 2017 Olivier Poitrey
+core,github.com/rs/zerolog/internal/cbor,MIT,Copyright (c) 2017 Olivier Poitrey
+core,github.com/rs/zerolog/internal/json,MIT,Copyright (c) 2017 Olivier Poitrey
+core,github.com/rs/zerolog/log,MIT,Copyright (c) 2017 Olivier Poitrey
 core,github.com/samuel/go-zookeeper/zk,BSD-3-Clause,"Copyright (c) 2013, Samuel Stauffer <samuel@descolada.com>"
 core,github.com/sassoftware/go-rpmutils,Apache-2.0,Copyright (c) SAS Institute Inc.
 core,github.com/sassoftware/go-rpmutils/cpio,Apache-2.0,Copyright (c) SAS Institute Inc.
@@ -695,10 +702,17 @@ core,github.com/spf13/cast,MIT,Copyright (c) 2014 Steve Francia
 core,github.com/spf13/cobra,Apache-2.0,Copyright © 2013 Steve Francia <spf@spf13.com>.
 core,github.com/spf13/jwalterweatherman,MIT,Copyright (c) 2014 Steve Francia
 core,github.com/spf13/pflag,BSD-3-Clause,Copyright (c) 2012 Alex Ogier. All rights reserved | Copyright (c) 2012 The Go Authors. All rights reserved
+core,github.com/spf13/viper,MIT,Copyright (c) 2014 Steve Francia
+core,github.com/spf13/viper/internal/encoding,MIT,Copyright (c) 2014 Steve Francia
+core,github.com/spf13/viper/internal/encoding/hcl,MIT,Copyright (c) 2014 Steve Francia
+core,github.com/spf13/viper/internal/encoding/json,MIT,Copyright (c) 2014 Steve Francia
+core,github.com/spf13/viper/internal/encoding/toml,MIT,Copyright (c) 2014 Steve Francia
+core,github.com/spf13/viper/internal/encoding/yaml,MIT,Copyright (c) 2014 Steve Francia
 core,github.com/stretchr/objx,MIT,"Copyright (c) 2014 Stretchr, Inc | Copyright (c) 2017-2018 objx contributors"
 core,github.com/stretchr/testify/assert,MIT,"Copyright (c) 2012-2020 Mat Ryer, Tyler Bunnell and contributors"
 core,github.com/stretchr/testify/mock,MIT,"Copyright (c) 2012-2020 Mat Ryer, Tyler Bunnell and contributors"
 core,github.com/stretchr/testify/require,MIT,"Copyright (c) 2012-2020 Mat Ryer, Tyler Bunnell and contributors"
+core,github.com/subosito/gotenv,MIT,Copyright (c) 2013 Alif Rachmawadi
 core,github.com/syndtr/gocapability/capability,BSD-2-Clause,Copyright 2013 Suryandaru Triandana <syndtr@gmail.com>
 core,github.com/syndtr/goleveldb/leveldb,BSD-2-Clause,Copyright 2012 Suryandaru Triandana <syndtr@gmail.com>
 core,github.com/syndtr/goleveldb/leveldb/cache,BSD-2-Clause,Copyright 2012 Suryandaru Triandana <syndtr@gmail.com>
@@ -746,6 +760,10 @@ core,github.com/xi2/xz,Public Domain,Igor Pavlov <http://7-zip.org/> | Lasse Col
 core,github.com/xor-gate/ar,MIT,Copyright (c) 2013 Blake Smith <blakesmith0@gmail.com>
 core,github.com/yashtewari/glob-intersection,Apache-2.0,Copyright (c) 2018 Yash Tewari (yashtewari)
 core,github.com/yusufpapurcu/wmi,MIT,Copyright (c) 2013 Stack Exchange
+core,github.com/zricethezav/gitleaks/v8/config,MIT,Copyright (c) 2019 Zachary Rice
+core,github.com/zricethezav/gitleaks/v8/detect,MIT,Copyright (c) 2019 Zachary Rice
+core,github.com/zricethezav/gitleaks/v8/detect/git,MIT,Copyright (c) 2019 Zachary Rice
+core,github.com/zricethezav/gitleaks/v8/report,MIT,Copyright (c) 2019 Zachary Rice
 core,go.etcd.io/bbolt,MIT,Copyright 2016 The etcd Authors
 core,go.etcd.io/etcd/api/v3/authpb,Apache-2.0,Copyright 2016 The etcd Authors
 core,go.etcd.io/etcd/api/v3/etcdserverpb,Apache-2.0,Copyright 2016 The etcd Authors
@@ -1120,6 +1138,7 @@ core,gopkg.in/DataDog/dd-trace-go.v1/profiler,Apache-2.0,"Copyright 2016-Present
 core,gopkg.in/DataDog/dd-trace-go.v1/profiler/internal/pprofutils,Apache-2.0,"Copyright 2016-Present Datadog, Inc."
 core,gopkg.in/Knetic/govaluate.v3,MIT,"Copyright (c) 2014-2016 George Lester | abrander (panic-finding testing tool) | benpaxton (fix for missing type checks during literal elide process) | bgaifullin (lifting restriction on complex/struct types) | dpaolella (exposure of variables used in an expression) | iasci (ternary operator) | oxtoacart (parameter structures, deferred parameter retrieval) | prashantv (optimization of bools) | vjeantet (regex support) | wmiller848 (bitwise operators) | xfennec (fix for dates being parsed in the current Location)"
 core,gopkg.in/inf.v0,BSD-3-Clause,Copyright (c) 2012 Péter Surányi. Portions Copyright (c) 2009 The Go Authors. All rights reserved.
+core,gopkg.in/ini.v1,Apache-2.0,Copyright 2014 Unknwon
 core,gopkg.in/natefinch/lumberjack.v2,MIT,Copyright (c) 2014 Nate Finch
 core,gopkg.in/yaml.v2,Apache-2.0,Copyright 2011-2016 Canonical Ltd
 core,gopkg.in/yaml.v3,MIT,Copyright (c) 2006-2010 Kirill Simonov | Copyright 2011-2016 Canonical Ltd

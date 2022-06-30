@@ -18,6 +18,8 @@ import (
 	"os"
 	"regexp"
 	"strings"
+
+	"github.com/zricethezav/gitleaks/v8/detect"
 )
 
 // Replacer represents a replacement of sensitive information with a "clean" version.
@@ -64,13 +66,17 @@ var blankRegex = regexp.MustCompile(`^\s*$`)
 // It then applies all MultiLine replacers to the entire text of the input.
 type Scrubber struct {
 	singleLineReplacers, multiLineReplacers []Replacer
+	detector                                *detect.Detector
 }
 
 // New creates a new scrubber with no replacers installed.
 func New() *Scrubber {
+	// (error here can only come from GitLeaks' own default config being incorrect)
+	detector, _ := detect.NewDetectorDefaultConfig()
 	return &Scrubber{
 		singleLineReplacers: make([]Replacer, 0),
 		multiLineReplacers:  make([]Replacer, 0),
+		detector:            detector,
 	}
 }
 
@@ -136,6 +142,9 @@ func (c *Scrubber) scrubReader(file io.Reader) ([]byte, error) {
 	// Then we apply multiline replacers on the cleaned file
 	cleanedFile = c.scrub(cleanedFile, c.multiLineReplacers)
 
+	// Finally, apply gitleaks
+	cleanedFile = c.gitleaks(cleanedFile)
+
 	return cleanedFile, nil
 }
 
@@ -157,5 +166,40 @@ func (c *Scrubber) scrub(data []byte, replacers []Replacer) []byte {
 			}
 		}
 	}
+	return data
+}
+
+// gitleaks applies the gitleaks library to the given data.
+func (c *Scrubber) gitleaks(data []byte) []byte {
+	// get gitleaks' findings within this set of bytes
+	findings := c.detector.DetectBytes(data)
+	if len(findings) == 0 {
+		return data
+	}
+
+	// Split the data by line.  Note that this does not copy the original data,
+	// so it can be modified in-place.  Also note that this slice is
+	// zero-indexed, while StartLine and Endline are one-indexed.
+	lines := bytes.Split(data, []byte("\n"))
+	for _, finding := range findings {
+		for _, l := range lines[finding.StartLine : finding.EndLine+1] {
+			// StartColumn appears to be offset by 1?
+			start, end := finding.StartColumn-2, finding.EndColumn-1
+			if start < 0 {
+				start = 0
+			}
+			if start > len(l) {
+				start = len(l)
+			}
+			if end > len(l) {
+				end = len(l)
+			}
+			for i := start; i < end; i++ {
+				l[i] = byte('*')
+			}
+		}
+	}
+
+	// data has been redacted in-place
 	return data
 }

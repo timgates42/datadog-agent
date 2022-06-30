@@ -83,3 +83,13 @@ func TestScrubLine(t *testing.T) {
 	res := scrubber.ScrubLine("https://foo:bar@example.com")
 	require.Equal(t, "https://foo:********@example.com", res)
 }
+
+func TestGitleaks(t *testing.T) {
+	scrubber := New()
+	scrubber.gitleaks([]byte(`hello
+Split the adta by line.  Note that this does not copy the original data, Split the adta by line.  Note that this does not copy the original data,
+dynatrace secret is here: dt0c01.ST2EY72KQINMH574WMNVI7YN.G3DFPBEJYMODIDAEX454M7YWBUVEFOWKPRVMWFASS64NFH52PX6BNDVFFM572RZM!
+age secret is AGE-SECRET-KEY-1QQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQ <-- there
+Split the adta by line.  Note that this does not copy the original data, Split the adta by line.  Note that this does not copy the original data,
+hi`))
+}
