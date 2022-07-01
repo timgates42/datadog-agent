@@ -178,7 +178,6 @@ func (ctr *realConntracker) GetStats() map[string]int64 {
 	if registers != 0 {
 		m["nanoseconds_per_register"] = registersTotalTime / registers
 	}
-	m["registers_dropped"] = atomic.LoadInt64(&ctr.stats.registersDropped)
 
 	unregisters := atomic.LoadInt64(&ctr.stats.unregisters)
 	unregisterTotalTime := atomic.LoadInt64(&ctr.stats.unregistersTotalTime)
