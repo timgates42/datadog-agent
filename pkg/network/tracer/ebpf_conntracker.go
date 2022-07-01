@@ -14,11 +14,13 @@ import (
 	"fmt"
 	"io"
 	"math"
+	"path/filepath"
 	"sync"
 	"sync/atomic"
 	"time"
 	"unsafe"
 
+	ddebpf "github.com/DataDog/datadog-agent/pkg/ebpf"
 	"github.com/DataDog/datadog-agent/pkg/network"
 	"github.com/DataDog/datadog-agent/pkg/network/config"
 	netebpf "github.com/DataDog/datadog-agent/pkg/network/ebpf"
@@ -57,6 +59,13 @@ type ebpfConntracker struct {
 
 // NewEBPFConntracker creates a netlink.Conntracker that monitor conntrack NAT entries via eBPF
 func NewEBPFConntracker(cfg *config.Config) (netlink.Conntracker, error) {
+	ksymPath := filepath.Join(cfg.ProcRoot, "kallsyms")
+	missing, err := ddebpf.VerifyKernelFuncs(ksymPath, []string{"__nf_conntrack_hash_insert"})
+	if err == nil && len(missing) > 0 {
+		log.Warnf("could not initialize ebpf conntrack, tracer will continue without NAT tracking: nf_conntrack kernel module is not loaded")
+		return netlink.NewNoOpConntracker(), nil
+	}
+
 	buf, err := getRuntimeCompiledConntracker(cfg)
 	if err != nil {
 		return nil, fmt.Errorf("unable to compile ebpf conntracker: %w", err)
